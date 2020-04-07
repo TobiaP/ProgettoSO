@@ -1,3 +1,0 @@
-/*
-	gli elementi della lista hanno un identificativo unico
-*/
