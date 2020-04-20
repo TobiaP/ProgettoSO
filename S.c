@@ -35,6 +35,8 @@ struct mesg_buffer {
 //^^^^^^^^^^^^^^
 //util.h
 
+#include "action.h"
+
 volatile int flag_usr1 = 0;
 volatile int flag_usr2 = 0;
 volatile int flag_term = 0;
@@ -54,6 +56,25 @@ void sighandler_int(int sig) {
 
 int pid_L, pid_T, pid, msgid_T, msgid_L;
 char pipe_L[MAX_BUFF_SIZE], pipe_T[MAX_BUFF_SIZE];
+
+void azione_T(char* azione)
+{
+  switch(azione[0])
+  {
+      case 'A':
+          aziona_A(pid_primo);
+      break;
+      case 'B':
+          aziona_B(pid_primo);
+      break;
+      case 'C':
+          aziona_C(pid_primo);
+      break;
+      case 'D':
+          aziona_D(pid_primo);
+      break;
+  }
+}
 
 int chiedi_stato_L()
 {
@@ -95,7 +116,7 @@ int main(int argc, char* argv[])
   {
     sprintf(pipe_L, "%s%d", path_pipe, getpid());
     mkfifo(path_pipe, 0666);
-    execl(path_L, arg_0, NULL);
+    execlp(path_L, arg_0, NULL);
     exit(0);
   }
   
@@ -111,8 +132,8 @@ int main(int argc, char* argv[])
     mkfifo(path_pipe, 0666);
 
     if(*argv[0]=='0') //0->button, 1->switch
-      execl(path_B, arg_0, NULL);
-    else execl(path_S, arg_0, NULL);
+      execlp(path_B, arg_0, NULL);
+    else execlp(path_S, arg_0, NULL);
 
     exit(0);
   }
@@ -144,8 +165,12 @@ int main(int argc, char* argv[])
     if(flag_usr2)
     {
       flag_usr2=0;
-      //riceve il tempo di spegnimento (per gli switch � indifferente)
+      //riceve il tempo di spegnimento (per gli switch è indifferente)
       msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
+      if(!chiedi_stato_T())
+      {
+        aziona_T();  //se T non è in pressione l'azione del comando viene eseguita
+      }
       premi_T(atof(message.mesg_text));
     }
 
