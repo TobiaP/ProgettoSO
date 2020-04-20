@@ -35,8 +35,6 @@ struct mesg_buffer {
 //^^^^^^^^^^^^^^
 //util.h
 
-#include "action.h"
-
 volatile int flag_usr1 = 0;
 volatile int flag_usr2 = 0;
 volatile int flag_term = 0;
@@ -54,7 +52,7 @@ void sighandler_int(int sig) {
     }
 }
 
-int pid_L, pid_T, pid, msgid_T, msgid_L;
+int pid_L, pid_T, pid, msgid_T, msgid_L, msgid_C;
 char pipe_L[MAX_BUFF_SIZE], pipe_T[MAX_BUFF_SIZE];
 
 void azione_T(char azione)
@@ -62,16 +60,36 @@ void azione_T(char azione)
   switch(azione)
   {
       case 'A':
-          aziona_A(pid_primo);
+      {
+          message.mesg_type=1;
+          message.mesg_text[0]='A';
+          msgsnd(msgid_C, &message, sizeof(message), 0);
+          kill(pid_C, SIGUSR1);
+      }        
       break;
       case 'B':
-          aziona_B(pid_primo);
+      {
+          message.mesg_type=1;
+          message.mesg_text[0]='B';
+          msgsnd(msgid_C, &message, sizeof(message), 0);
+          kill(pid_C, SIGUSR1);
+      }  
       break;
       case 'C':
-          aziona_C(pid_primo);
+      {
+          message.mesg_type=1;
+          message.mesg_text[0]='C';
+          msgsnd(msgid_C, &message, sizeof(message), 0);
+          kill(pid_C, SIGUSR1);
+      }  
       break;
       case 'D':
-          aziona_D(pid_primo);
+      {
+          message.mesg_type=1;
+          message.mesg_text[0]='D';
+          msgsnd(msgid_C, &message, sizeof(message), 0);
+          kill(pid_C, SIGUSR1);
+      }  
       break;
   }
 }
@@ -103,12 +121,15 @@ void premi_T(double tempo)
   kill(pid_T, SIGUSR2);
 }
 
-//[0]=0/1->button/switch [1]="comando corrispondente (A, B, C, D)
+//[0]=0/1->button/switch [1]="comando corrispondente (A, B, C, D) [2]=Pid_Coda
 int main(int argc, char* argv[])
 {
 
-  key_t key = ftok("/tmp/ipc/mqueues", getpid());
+  key_t key = ftok("/tmp/ipc/mqueues", getpid());   //si apre la pipe per la comunicazione con il main
   int msgid = msgget(key, 0666|IPC_CREAT);
+    
+  key_t key_C = ftok("/tmp/ipc/mqueues", atoi(argv[2])); //si apre la pipe con la Coda
+  msgid_C = msgget(key, 0666|IPC_CREAT);
 
   //creo un led e ed una pipe che connetta S<->Led
   pid=fork();
