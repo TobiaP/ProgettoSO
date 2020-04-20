@@ -57,9 +57,9 @@ void sighandler_int(int sig) {
 int pid_L, pid_T, pid, msgid_T, msgid_L;
 char pipe_L[MAX_BUFF_SIZE], pipe_T[MAX_BUFF_SIZE];
 
-void azione_T(char* azione)
+void azione_T(char azione)
 {
-  switch(azione[0])
+  switch(azione)
   {
       case 'A':
           aziona_A(pid_primo);
@@ -103,7 +103,7 @@ void premi_T(double tempo)
   kill(pid_T, SIGUSR2);
 }
 
-//[0]=0/1->button/switch
+//[0]=0/1->button/switch [1]="comando corrispondente (A, B, C, D)
 int main(int argc, char* argv[])
 {
 
@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
     sprintf(pipe_T, "%s%d", path_pipe, getpid());
     mkfifo(path_pipe, 0666);
 
-    if(*argv[0]=='0') //0->button, 1->switch
+    if(argv[0][0]=='0') //0->button, 1->switch
       execlp(path_B, arg_0, NULL);
     else execlp(path_S, arg_0, NULL);
 
@@ -168,9 +168,8 @@ int main(int argc, char* argv[])
       //riceve il tempo di spegnimento (per gli switch è indifferente)
       msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
       if(!chiedi_stato_T())
-      {
-        aziona_T();  //se T non è in pressione l'azione del comando viene eseguita
-      }
+        aziona_T(argv[1][0]);  //se T non è in pressione l'azione del comando viene eseguita
+      
       premi_T(atof(message.mesg_text));
     }
 
