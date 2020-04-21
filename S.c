@@ -64,7 +64,6 @@ void azione_T(char azione)
           message.mesg_type=1;
           message.mesg_text[0]='A';
           msgsnd(msgid_C, &message, sizeof(message), 0);
-          kill(pid_C, SIGUSR1);
       }        
       break;
       case 'B':
@@ -72,7 +71,6 @@ void azione_T(char azione)
           message.mesg_type=1;
           message.mesg_text[0]='B';
           msgsnd(msgid_C, &message, sizeof(message), 0);
-          kill(pid_C, SIGUSR1);
       }  
       break;
       case 'C':
@@ -80,7 +78,6 @@ void azione_T(char azione)
           message.mesg_type=1;
           message.mesg_text[0]='C';
           msgsnd(msgid_C, &message, sizeof(message), 0);
-          kill(pid_C, SIGUSR1);
       }  
       break;
       case 'D':
@@ -88,7 +85,6 @@ void azione_T(char azione)
           message.mesg_type=1;
           message.mesg_text[0]='D';
           msgsnd(msgid_C, &message, sizeof(message), 0);
-          kill(pid_C, SIGUSR1);
       }  
       break;
   }
