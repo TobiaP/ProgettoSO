@@ -59,6 +59,9 @@ void init() {
 	key_y key_Coda = ftok("/tmp/ipc/mqueues", pid_Coda);
 	msgid_Coda = msgget(key_Coda, 0666|IPC_CREAT);
 	
+	char* pid_C;
+	sprintf(pid_C, "%i", pid_Coda);
+	
 	// scelta bottoni / interruttori
 	do {
 		printf("Choose buttons or switches: [b/s]\n");
@@ -77,9 +80,9 @@ void init() {
 	if (pid == 0) {                    //codice figlio
 		mkfifo(path_pipe, 0666);       //creo una pipe con nome
 		if (type == 'b') {
-			execlp(path_S, "0", "A", NULL);
+			execlp(path_S, "0", "A", pid_C, NULL);
 		} else {
-			execlp(path_S, "1", "A", NULL);
+			execlp(path_S, "1", "A", pid_C, NULL);
 		}
 		exit(0)
 	}
@@ -91,9 +94,9 @@ void init() {
 	if (pid == 0) {
 		mkfifo(path_pipe, 0666);
 		if (type == 'b') {
-			execlp(path_S, "0", "B", NULL);
+			execlp(path_S, "0", "B", pid_C, NULL);
 		} else {
-			execlp(path_S, "1", "B", NULL);
+			execlp(path_S, "1", "B", pid_C, NULL);
 		}
 		exit(0)
 	}
@@ -105,9 +108,9 @@ void init() {
 	if (pid == 0) {
 		mkfifo(path_pipe, 0666);
 		if (type == 'b') {
-			execlp(path_S, "0", "C", NULL);
+			execlp(path_S, "0", "C", pid_C, NULL);
 		} else {
-			execlp(path_S, "1", "C", NULL);
+			execlp(path_S, "1", "C", pid_C, NULL);
 		}
 		exit(0)
 	}
@@ -119,9 +122,9 @@ void init() {
 	if (pid == 0) {
 		mkfifo(path_pipe, 0666);
 		if (type == 'b') {
-			execlp(path_S, "0", "D", NULL);
+			execlp(path_S, "0", "D", pid_C, NULL);
 		} else {
-			execlp(path_S, "1", "D", NULL);
+			execlp(path_S, "1", "D", pid_C, NULL);
 		}
 		exit(0)
 	}
