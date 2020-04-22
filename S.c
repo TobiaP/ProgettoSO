@@ -190,10 +190,17 @@ int main(int argc, char* argv[])
       premi_T(atof(message.mesg_text));
     }
 
-    //SIGTERM->terminare il processo
+    //SIGTERM->terminare il processo, comunicare al led, a T e a Coda di terminare
     if(flag_term)
     {
       flag_term=0;
+      message.mesg_type=1;
+      message.mesg_text[0]='E';
+      msgsnd(msgid_C, &message, sizeof(message), 0);
+          
+      kill(pid_L, SIGTERM);
+      kill(pid_T, SIGTERM);
+      wait(NULL);
       msgctl(msgid, IPC_RMID, NULL);
       exit(0);
     }
