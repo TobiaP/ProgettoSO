@@ -22,6 +22,7 @@ void pressione_T_SA(double tempo);
 void pressione_T_SB(double tempo);
 void pressione_T_SC(double tempo);
 void pressione_T_SD(double tempo);
+void print();
 
 //-----------------------------------------------------------------------------------------------------------------------
 int main() {
@@ -30,11 +31,13 @@ int main() {
 	
 	// core
 	printf("\n\n");
-	printf("- [a] --> S1: delete process \n");
-	printf("- [b] --> S2: create process \n");
-	printf("- [c] --> S3: select next process \n");
-	printf("- [d] --> S4: delete selected process \n");
-	printf("- [E] --> exit \n\n");
+	printf("- 'a' --> delete process \n");
+	printf("- 'b' --> create process \n");
+	printf("- 'c' --> select next process \n");
+	printf("- 'd' --> delete selected process \n");
+	printf("- 'E' --> exit \n\n");
+	printf("\n[A][B][C][D]\n");
+	printf("( )( )( )( )\n\n\n");
 	
 	if (type == 'b') {
 		core_buttons();
@@ -256,5 +259,9 @@ void pressione_T_SD(double tempo) {
 	sprintf(message.mesg_text, "%f", tempo);
 	msgsnd(msgid_SD, &message, sizeof(message, 0));
 	kill(pid_SD, SIGUSR2);
+}
+
+void print() {
+	
 }
 
