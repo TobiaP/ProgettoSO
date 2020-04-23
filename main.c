@@ -10,6 +10,10 @@ char type;
 pid_t pid, pid_SA, pid_SB, pid_SC, pid_SD, pid_Coda;
 int msgid, msgid_SA, msgid_SB, msgid_SC, msgid_SD, msgid_Coda;
 
+// variabili per stampa
+int led_status[] = {0, 0, 0, 0};
+int pint_needed = 0;
+
 void init(); // scelta bott. / interr. ed inizializza S1, S2, S3, S4
 void core_buttons();
 void core_switch();
@@ -168,6 +172,11 @@ void core_buttons() {
 				printf("ERROR, invalid input!\n");
 				break;
 		};
+		
+		if (pint_needed != 0) {
+			print();
+		}
+		
 	} while (input != 'E');
 }
 
@@ -204,10 +213,15 @@ void core_switch() {
 				printf("ERROR, invalid input!\n");
 				break;
 		};
+		
+		if (pint_needed != 0) {
+			print();
+		}
+		
 	} while (input != 'E');
 }
 
-// Pressione Tasto
+// Verifica Led
 int richiesta_stato_led_SA() {
 	kill(pid_SA, SIGUSR1);                                  //comunico ad SA la necessità di conoscere lo stato del led
 	msgrcv(msgid_SA, &message, sizeof(message), 1, 0);      //leggo lo stato del led
@@ -232,7 +246,7 @@ int richiesta_stato_led_SD() {
 	return atoi(message.mesg_text);
 }
 
-// Verifica Led
+// Pressione Tasto
 void pressione_T_SA(double tempo) {                         //se l'utente non inserisce il tempo deve essere tempo=0.5
 	message.mesg_type=1;                                    //creo un messaggio da mandare a SA
 	sprintf(message.mesg_text, "%f", tempo);                //in cui inserisco un tempo (nel caso dei bottoni sarà sempre 0.0)
@@ -262,6 +276,8 @@ void pressione_T_SD(double tempo) {
 }
 
 void print() {
-	
+	printf("\n\n[A][B][C][D]\n");
+	printf("(%d",led_status[0],")(%d",led_status[1],")(%d",led_status[2],")(%d",led_status[3],")\n\n\n");
+	pint_needed = 0;
 }
 
