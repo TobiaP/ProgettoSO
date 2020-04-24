@@ -34,12 +34,12 @@ bin/coda.o: src/coda.o
 	$(CC) $(CFLAGS) -c -o bin/coda.o src/coda.c
 
 help:
-    @echo "$(RED)INFORMAZIONI SUL PROGETTO$(STD)"
-    @echo "Gaia Faggin"
-    @echo "Tobia Pavona"
-    @echo "Thomas Herbert"
-    @echo "Francesco Giacomazzi"
-	@echo "\n Per iniziare: digita $(RED) make build(STD), poi $(RED)./run$(STD), oppure $(RED) make clean$(STD) per rimuovere i file temporanei."
+	@echo "$(RED)INFORMAZIONI SUL PROGETTO$(STD)"
+	@echo "Gaia Faggin"
+	@echo "Tobia Pavona"
+    	@echo "Thomas Herbert"
+    	@echo "Francesco Giacomazzi"
+	@echo "\n Per iniziare: digita $(RED) make build$(STD), poi $(RED)./run$(STD), oppure $(RED) make clean$(STD) per rimuovere i file temporanei."
 
 build:
 	@make clean
