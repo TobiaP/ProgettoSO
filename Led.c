@@ -26,8 +26,8 @@ struct mesg_buffer {
     char mesg_text[100]; 
 } message; 
 
-//^^^^^^^^^^^^^^
-//util.h
+/*^^^^^^^^^^^^^^*/
+/*util.h*/
 
 int pid;
 
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
   
   while(1)
   {
-    if(flag_usr1) //inviare stato ON/OFF
+    if(flag_usr1) /*inviare stato ON/OFF*/
     {
       flag_usr1=0;
 
@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
       msgsnd(msgid, &message, sizeof(message), 0); 
     }
     
-    if(flag_usr2) //ricevere stato ON/OFF
+    if(flag_usr2) /*ricevere stato ON/OFF*/
     {
       flag_usr2=0;
 
