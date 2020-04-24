@@ -29,9 +29,12 @@ struct mesg_buffer {
 } message; 
 
 #define path_pipe "/tmp/ipc/"
-#define path_L "bin/Led.c"
-#define path_B "bin/Button.c"
-#define path_S "bin/Switc.c"
+#define path_L "bin/Led"
+#define path_B "bin/Button"
+#define path_S "bin/S"
+#define path_Sw "bin/switc"
+#define path_C "bin/Coda"
+#define path_P "bin/Proc"
 #define arg_0 "1"
 #define MAX_BUFF_SIZE 1024
 
