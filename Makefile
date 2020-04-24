@@ -10,7 +10,7 @@ STD=\033[0m
 
 default: help
 
-targets: bin/main
+targets: bin/main bin/Coda bin/Button bin/Led bin/S bin/Switc  
 
 bin/main: src/main.c bin/util.o 
 	$(CC) $(CFLAGS) -o bin/main src/main.c bin/util.o 
