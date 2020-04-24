@@ -33,11 +33,11 @@ struct mesg_buffer {
 #define arg_0 "1"
 #define MAX_BUFF_SIZE 1024
 
-//^^^^^^^^^^^^^^
-//util.h
+/*^^^^^^^^^^^^^^*/
+/*util.h*/
 
 pid_t pid, pid_figlio, pid_padre;
-int pipeF[2], pipeP[2], fig=0;//pipe con il figlio, pipe con il padre, 1->c'è figlio / 0->non c'è
+int pipeF[2], pipeP[2], fig=0;/*pipe con il figlio, pipe con il padre, 1->c'Ã¨ figlio / 0->non c'Ã¨*/
 
 unsigned long long int ident, fident;
 
@@ -48,23 +48,23 @@ void crea_figlio(char* nident)
   pipe(pipeF);
   pid_t pid_n;
   pid_n=fork();
-  if(pid_n==0)//creazione processo figlio
+  if(pid_n==0)/*creazione processo figlio*/
   {
-    close(pipeF[1]);    //il figlio è il lettore della pipe
-    dup2(pipeF[0], 0);  //ora il figlio legge dalla pipe con scanf()
-    close(pipeF[0]);    //si chiude la lettura originale
+    close(pipeF[1]);    /*il figlio Ã¨ il lettore della pipe*/
+    dup2(pipeF[0], 0);  /*ora il figlio legge dalla pipe con scanf()*/
+    close(pipeF[0]);    /*si chiude la lettura originale*/
     
     execlp(path_P, nident);
     exit(0);
   }else{
-    close(pipeF[0]);    //questo processo deve inviare sulla pipe
-    dup2(pipeF[1], 1);  //questo processo invia con printf()
-    close(pipeF[1]);    //si chiude la scrittura originale
+    close(pipeF[0]);    /*questo processo deve inviare sulla pipe*/
+    dup2(pipeF[1], 1);  /*questo processo invia con printf()*/
+    close(pipeF[1]);    /*si chiude la scrittura originale*/
 
   }
 }
 
-//[0]=identificatore 
+/*[0]=identificatore */
 int main(int argc, char* argv[])
 {
   
@@ -80,54 +80,54 @@ int main(int argc, char* argv[])
     
     switch(lettera)
     {
-    case 'A':                   //eliminazione da un processo in poi
+    case 'A':                   /*eliminazione da un processo in poi*/
     {
       scanf("%s", lettura);
       if(atoll(lettura)==fident)
       {
-        printf("%s", "E\n");    //se il suo figlio è il processo da eliminare
-        wait(NULL);             //glielo comunica altrimenti continua cosi
+        printf("%s", "E\n");    /*se il suo figlio Ã¨ il processo da eliminare*/
+        wait(NULL);             /*glielo comunica altrimenti continua cosi*/
       }else
         printf("%c%s", lettera, lettura);
     }break;
 
-    case 'B':                   //aggiunta figlio
+    case 'B':                   /*aggiunta figlio*/
     {
       scanf("%s", lettura);
-      if(fig)                   //se il figlio esiste passa il nuovo id
+      if(fig)                   /*se il figlio esiste passa il nuovo id*/
       {
-        printf("%c", 'B');      //e la lettera B
-        printf("%s", lettura);  //a quello successivo
+        printf("%c", 'B');      /*e la lettera B*/
+        printf("%s", lettura);  /*a quello successivo*/
       }
-      else                      //altrimenti crea un figlio e gli 
-        crea_figlio(lettura);   //passa il nuovo identificativo
+      else                      /*altrimenti crea un figlio e gli */
+        crea_figlio(lettura);   /*passa il nuovo identificativo*/
     }break;
 
-    case 'C':                   //elimina tutti gli elementi da un figlio in poi
+    case 'C':                   /*elimina tutti gli elementi da un figlio in poi*/
     {
       scanf("%s", lettura);     
-      if(fident==atoll(lettura))  //se il prossimo è l'elemento da eliminare glie lo comunico
+      if(fident==atoll(lettura))  /*se il prossimo Ã¨ l'elemento da eliminare glie lo comunico*/
       {
         printf("%c", 'E');
         pid_figlio=1;
         fident=0;
         fig=0;
       }
-      else{                        //altrimenti gli passo il messaggio
+      else{                        /*altrimenti gli passo il messaggio*/
         printf("%c", 'C');
         printf("%s", lettura);
       }
 
     }
 
-    case 'E':                   //eliminazione di tutti i processi
-    {                           //da questo in poi
+    case 'E':                   /*eliminazione di tutti i processi*/
+    {                           /*da questo in poi*/
       if(fig)
       {                   
-        printf("%c", 'E');      //comunica all'elemento successivo di fare lo stesso
+        printf("%c", 'E');      /*comunica all'elemento successivo di fare lo stesso*/
         wait(NULL);             
       }
-      exit(0);                  //quando il figlio (se c'è) si è eliminato lo fa anche questo
+      exit(0);                  /*quando il figlio (se c'Ã¨) si Ã¨ eliminato lo fa anche questo*/
     }break;
 
 
