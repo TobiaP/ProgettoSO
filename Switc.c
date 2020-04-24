@@ -1,10 +1,5 @@
 #include "util.h"
 
-struct mesg_buffer { 
-    long mesg_type; 
-    char mesg_text[100]; 
-} message; 
-
 int pid;
 
 volatile int flag_usr1 = 0;
@@ -50,9 +45,10 @@ int main(int argc, char* argv[])
 
       if(flag_usr2) /*ricevere stato ON/OFF*/
       {
+	int errlett;
         flag_usr2=0;
 
-        int errlett = msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
+        errlett = msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
         if(errlett==-1) printf("Messaggio non letto correttamente");
 
         if(atoi(message.mesg_text)==0) 
