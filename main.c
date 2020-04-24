@@ -3,18 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//#include "util.h"
+include "util.h"
 #include "s.h"
 
 char type;
 pid_t pid, pid_SA, pid_SB, pid_SC, pid_SD, pid_Coda;
 int msgid, msgid_SA, msgid_SB, msgid_SC, msgid_SD, msgid_Coda;
 
-// variabili per stampa
+/*variabili per stampa*/
 int led_status[] = {0, 0, 0, 0};
 int pint_needed = 0;
 
-void init(); // scelta bott. / interr. ed inizializza S1, S2, S3, S4
+void init(); /* scelta bott. / interr. ed inizializza S1, S2, S3, S4*/
 void core_buttons();
 void core_switch();
 void led_check();
@@ -29,12 +29,12 @@ void pressione_T_SC(double tempo);
 void pressione_T_SD(double tempo);
 void print();
 
-//-----------------------------------------------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------------------------------------*/
 int main() {
 	
 	init();
 	
-	// core
+	/* core*/
 	printf("\n\n");
 	printf("- 'a' --> delete process \n");
 	printf("- 'b' --> create process \n");
@@ -52,13 +52,13 @@ int main() {
 	
 	return 0;
 }
-//-----------------------------------------------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------------------------------------*/
 
-// inizializzazione processi
+/* inizializzazione processi*/
 void init() {
 	int i = 1;
 	
-	// Inizializzazione coda
+	/* Inizializzazione coda*/
 	pid_Coda = fork();
 	if (pid_Coda == 0) {
 		mkfifo(path_pipe, 0666);
@@ -71,7 +71,7 @@ void init() {
 	char* pid_C;
 	sprintf(pid_C, "%i", pid_Coda);
 	
-	// scelta bottoni / interruttori
+	/* scelta bottoni / interruttori*/
 	do {
 		printf("Choose buttons or switches: [b/s]\n");
 		scanf(" %c", &type);
@@ -82,12 +82,12 @@ void init() {
 		}
 	} while (i > 0);
 	
-	// inizializzazione bottoni / interruttori
+	/* inizializzazione bottoni / interruttori*/
 	
-	// A
+	/* A*/
 	pid = fork();
-	if (pid == 0) {                    //codice figlio
-		mkfifo(path_pipe, 0666);       //creo una pipe con nome
+	if (pid == 0) {                    /*codice figlio*/
+		mkfifo(path_pipe, 0666);       /*creo una pipe con nome*/
 		if (type == 'b') {
 			execlp(path_S, "0", "A", pid_C, NULL);
 		} else {
@@ -95,10 +95,10 @@ void init() {
 		}
 		exit(0)
 	}
-	key_t key_SA = ftok("/tmp/ipc/mqueues", pid_SA);	//accedo alla pipe creata nel figlio
+	key_t key_SA = ftok("/tmp/ipc/mqueues", pid_SA);	/*accedo alla pipe creata nel figlio*/
 	msgid_SA = msgget(key_SA, 0666|IPC_CREAT);
 	
-	// B
+	/* B*/
 	pid = fork();
 	if (pid == 0) {
 		mkfifo(path_pipe, 0666);
@@ -112,7 +112,7 @@ void init() {
 	key_t key_SB = ftok("/tmp/ipc/mqueues", pid_SB);
 	msgid_SB = msgget(key_SB, 0666|IPC_CREAT);
 	
-	// C
+	/* C*/
 	pid = fork();
 	if (pid == 0) {
 		mkfifo(path_pipe, 0666);
@@ -126,7 +126,7 @@ void init() {
 	key_t key_SC = ftok("/tmp/ipc/mqueues", pid_SC);
 	msgid_SC = msgget(key_SC, 0666|IPC_CREAT);
 	
-	// D
+	/* D*/
 	pid = fork();
 	if (pid == 0) {
 		mkfifo(path_pipe, 0666);
@@ -153,16 +153,16 @@ void core_buttons() {
 		
 		switch (input) {
 			case 'a':
-				pressione_T_SA(tempo); // call(S1);
+				pressione_T_SA(tempo); /* call(S1);*/
 				break;
 			case 'b':
-				pressione_T_SB(tempo); // call(S2);
+				pressione_T_SB(tempo); /* call(S2);*/
 				break;
 			case 'c':
-				pressione_T_SC(tempo); // call(S3);
+				pressione_T_SC(tempo); /* call(S3);*/
 				break;
 			case 'd':
-				pressione_T_SD(tempo); // call(S4);
+				pressione_T_SD(tempo); /* call(S4);*/
 				break;
 			case 'E':
 				kill(pid_SA, SIGTERM);
@@ -179,7 +179,7 @@ void core_buttons() {
 				break;
 		};
 		
-		// stampa
+		/* stampa*/
 		led_check();
 		if (pint_needed != 0) {
 			print();
@@ -200,16 +200,16 @@ void core_switch() {
 		
 		switch (input) {
 			case 'a':
-				pressione_T_SA(tempo); // call(S1);
+				pressione_T_SA(tempo); /* call(S1);*/
 				break;
 			case 'b':
-				pressione_T_SB(tempo); // call(S2);
+				pressione_T_SB(tempo); /* call(S2);*/
 				break;
 			case 'c':
-				pressione_T_SC(tempo); // call(S3);
+				pressione_T_SC(tempo); /* call(S3);*/
 				break;
 			case 'd':
-				pressione_T_SD(tempo); // call(S4);
+				pressione_T_SD(tempo); /* call(S4)*/
 				break;
 			case 'E':
 				kill(pid_SA, SIGTERM);
@@ -226,7 +226,7 @@ void core_switch() {
 				break;
 		};
 		
-		// stampa
+		/* stampa*/
 		led_check();
 		if (pint_needed != 0) {
 			print();
@@ -235,11 +235,11 @@ void core_switch() {
 	} while (input != 'E');
 }
 
-// Verifica Led
+/* Verifica Led*/
 int richiesta_stato_led_SA() {
-	kill(pid_SA, SIGUSR1);                                  //comunico ad SA la necessità di conoscere lo stato del led
-	msgrcv(msgid_SA, &message, sizeof(message), 1, 0);      //leggo lo stato del led
-	return atoi(message.mesg_text);                         //converto lo stato del led in int (0, 1)
+	kill(pid_SA, SIGUSR1);                                  /*comunico ad SA la necessità di conoscere lo stato del led*/
+	msgrcv(msgid_SA, &message, sizeof(message), 1, 0);      /*leggo lo stato del led*/
+	return atoi(message.mesg_text);                         /*converto lo stato del led in int (0, 1)*/
 }
 
 int richiesta_stato_led_SB() {
@@ -261,13 +261,13 @@ int richiesta_stato_led_SD() {
 }
 
 void led_check() {
-	// controllo lo stato attuale dei 4 led
+	/* controllo lo stato attuale dei 4 led*/
 	int L1 = richiesta_stato_led_SA();
 	int L2 = richiesta_stato_led_SB();
 	int L3 = richiesta_stato_led_SC();
 	int L4 = richiesta_stato_led_SD();
 	
-	// li confronto con gli ultimi stampati
+	/* li confronto con gli ultimi stampati*/
 	if (L1 != led_status[0]) {
 		led_status[0] = L1;
 		pint_needed = 1;
@@ -289,12 +289,12 @@ void led_check() {
 	}
 }
 
-// Pressione Tasto
-void pressione_T_SA(double tempo) {                         //se l'utente non inserisce il tempo deve essere tempo=0.5
-	message.mesg_type=1;                                    //creo un messaggio da mandare a SA
-	sprintf(message.mesg_text, "%f", tempo);                //in cui inserisco un tempo (nel caso dei bottoni sarà sempre 0.0)
-	msgsnd(msgid_SA, &message, sizeof(message, 0));          //lo invio
-	kill(pid_SA, SIGUSR2);                                  //comunico a SA che c'è un messaggio da leggere
+/* Pressione Tasto*/
+void pressione_T_SA(double tempo) {                         /*se l'utente non inserisce il tempo deve essere tempo=0.5*/
+	message.mesg_type=1;                                    /*creo un messaggio da mandare a SA*/
+	sprintf(message.mesg_text, "%f", tempo);                /*in cui inserisco un tempo (nel caso dei bottoni sarà sempre 0.0)*/
+	msgsnd(msgid_SA, &message, sizeof(message, 0));          /*lo invio*/
+	kill(pid_SA, SIGUSR2);                                  /*comunico a SA che c'è un messaggio da leggere*/
 }
 
 void pressione_T_SB(double tempo) {
