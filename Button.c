@@ -25,8 +25,8 @@ struct mesg_buffer {
     char mesg_text[100]; 
 } message; 
 
-//^^^^^^^^^^^^^^
-//util.h
+/*^^^^^^^^^^^^^^
+util.h*/
 
 int pid;
 
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
     while(1)
     {
       
-      if(flag_usr1) //inviare stato ON/OFF
+      if(flag_usr1) /*inviare stato ON/OFF*/
       {
         flag_usr1=0;
         if(stato)
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
         msgsnd(msgid, &message, sizeof(message), 0);
       }
 
-      if(flag_usr2) //ricevere stato ON/OFF
+      if(flag_usr2) /*ricevere stato ON/OFF*/
       {
         flag_usr2=0;
 
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
         if(errlett==-1) printf("Messaggio non letto correttamente");
 
         inizio=clock();
-        tempoatt=tempostd; //tempoatt è sempre >= tempostd
+        tempoatt=tempostd; /*tempoatt Ã¨ sempre >= tempostd*/
         if(atof(message.mesg_text)>tempoatt)
           tempoatt=atof(message.mesg_text);
 
@@ -100,11 +100,11 @@ int main(int argc, char* argv[])
       {
         flag_term = 0;
 
-        /*int ppid =(int) getppid();
+        int ppid =(int) getppid();
         key_t key_ppid = ftok("/tmp/ipc/mqueues", ppid);
         int msgid_ppid = msgget(key_ppid, 0666 | IPC_CREAT);
         message.mesg_type = 1;
-        msgsnd(msgid_ppid, &message, sizeof(message), 0);*/
+        msgsnd(msgid_ppid, &message, sizeof(message), 0);
       
         msgctl(msgid, IPC_RMID, NULL);
         exit(0);
