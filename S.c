@@ -32,9 +32,9 @@ struct mesg_buffer {
 #define arg_0 "1"
 #define MAX_BUFF_SIZE 1024
 
-//^^^^^^^^^^^^^^
-//util.h
-
+/*^^^^^^^^^^^^^^
+util.h
+*/
 volatile int flag_usr1 = 0;
 volatile int flag_usr2 = 0;
 volatile int flag_term = 0;
@@ -117,7 +117,7 @@ void premi_T(double tempo)
   kill(pid_T, SIGUSR2);
 }
 
-//[0]=0/1->button/switch [1]="comando corrispondente (A, B, C, D) [2]=Pid_Coda
+/*[0]=0/1->button/switch [1]="comando corrispondente (A, B, C, D) [2]=Pid_Coda*/
 int main(int argc, char* argv[])
 {
 
@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
   key_t key_C = ftok("/tmp/ipc/mqueues", atoi(argv[2])); //si apre la pipe con la Coda
   msgid_C = msgget(key, 0666|IPC_CREAT);
 
-  //creo un led e ed una pipe che connetta S<->Led
+  /*creo un led e ed una pipe che connetta S<->Led*/
   pid=fork();
   if(pid==0)
   {
@@ -141,14 +141,14 @@ int main(int argc, char* argv[])
   key_t key_L = ftok("/tmp/ipc/mqueues", pid_L);
   msgid_L = msgget(key_L, 0666|IPC_CREAT);
   
-  //creo un T(button/switch) e ed una pipe che connetta S<->T
+  /*creo un T(button/switch) e ed una pipe che connetta S<->T*/
   pid=fork();
   if(pid==0)
   {
     sprintf(pipe_T, "%s%d", path_pipe, getpid());
     mkfifo(path_pipe, 0666);
 
-    if(argv[0][0]=='0') //0->button, 1->switch
+    if(argv[0][0]=='0') /*0->button, 1->switch*/
       execlp(path_B, arg_0, NULL);
     else execlp(path_S, arg_0, NULL);
 
@@ -165,12 +165,12 @@ int main(int argc, char* argv[])
 
   while(1)
   {
-    //SIGUSR1->inviare stato Led
+    /*SIGUSR1->inviare stato Led*/
     if(flag_usr1)
     {
       flag_usr1=0;
 
-      //resetta lo stato del led in modo che sia concorde a T
+      /*resetta lo stato del led in modo che sia concorde a T*/
       set_L(chiedi_stato_T());
       
       message.mesg_type=1;
@@ -178,19 +178,19 @@ int main(int argc, char* argv[])
       msgsnd(msgid, &message, sizeof(message), 0);
     }
     
-    //SIGUSR2->premere T
+    /*SIGUSR2->premere T*/
     if(flag_usr2)
     {
       flag_usr2=0;
-      //riceve il tempo di spegnimento (per gli switch è indifferente)
+      /*riceve il tempo di spegnimento (per gli switch è indifferente)*/
       msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
       if(!chiedi_stato_T())
-        aziona_T(argv[1][0]);  //se T non è in pressione l'azione del comando viene eseguita
+        aziona_T(argv[1][0]);  /*se T non è in pressione l'azione del comando viene eseguita*/
       
       premi_T(atof(message.mesg_text));
     }
 
-    //SIGTERM->terminare il processo, comunicare al led, a T e a Coda di terminare
+    /*SIGTERM->terminare il processo, comunicare al led, a T e a Coda di terminare*/
     if(flag_term)
     {
       flag_term=0;
