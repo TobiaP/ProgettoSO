@@ -35,6 +35,7 @@ struct mesg_buffer {
 #define path_Sw "bin/switc"
 #define path_C "bin/Coda"
 #define path_P "bin/Proc"
+#define arg_0 "1"
 #define MAX_BUFF_SIZE 1024
 
 #endif
