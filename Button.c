@@ -26,6 +26,9 @@ int stato;
 
 int main(int argc, char* argv[])
 {
+	double tempostd, tempoatt;
+	clock_t inizio;
+	
   	pid = getpid(); 
   
   	signal(SIGTERM, sighandler_int);
@@ -35,8 +38,9 @@ int main(int argc, char* argv[])
 	key = ftok("/tmp/ipc/mqueues", pid);
   	msgid = msgget(key, 0666 | IPC_CREAT);
   
-  	double tempostd=0.5, tempoatt=0.5;
-	clock_t inizio = clock();
+  	tempostd=0.5;
+	tempoatt=0.5;
+	inizio = clock();
 
     while(1)
     {
@@ -57,9 +61,10 @@ int main(int argc, char* argv[])
 
       if(flag_usr2) /*ricevere stato ON/OFF*/
       {
+	int errlett;
         flag_usr2=0;
 
-        int errlett = msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
+        errlett = msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
         if(errlett==-1) printf("Messaggio non letto correttamente");
 
         inizio=clock();
@@ -71,11 +76,13 @@ int main(int argc, char* argv[])
 
       if(flag_term)
       {
+	int ppid, msgid_ppid;
+	key_t key_ppid;
         flag_term = 0;
 
-        int ppid =(int) getppid();
-        key_t key_ppid = ftok("/tmp/ipc/mqueues", ppid);
-        int msgid_ppid = msgget(key_ppid, 0666 | IPC_CREAT);
+        ppid =(int) getppid();
+        key_ppid = ftok("/tmp/ipc/mqueues", ppid);
+        msgid_ppid = msgget(key_ppid, 0666 | IPC_CREAT);
         message.mesg_type = 1;
         msgsnd(msgid_ppid, &message, sizeof(message), 0);
       
