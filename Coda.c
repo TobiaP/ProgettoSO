@@ -1,28 +1,29 @@
-
 #include "util.h"
 
 int N_proc = 1;                     /*numero di processi attuale >= 1*/
-unsigned long long int nuovo_id=0;  /*ultima identità creata*/
-unsigned long long int size_Coda=0; /*numero messaggi in queue*/
+int nuovo_id=0;  /*ultima identità creata*/
+int size_Coda=0; /*numero messaggi in queue*/
 int pipeF[2][2];                    /*vengono create due pipe con cui comunicare ai figli in modo che si possa cancellare */
                                     /*un figlio e nel frattempo creare l'altro*/
-unsigned long long int selezionato=0;   /*processo selezionato da C (default 0), se si preme un altro T torna a 0*/
+int selezionato=0;   /*processo selezionato da C (default 0), se si preme un altro T torna a 0*/
 int pipeatt=0;
 pid_t primo_pid;
 int msgid, msgid_main;				/*nome pipe con comandi, nome pipe con main*/
-unsigned long long int coda[MAX_QUEUE]; /*tiene memorizzati tutti gli identificativi dei processi*/
+int coda[MAX_QUEUE]; /*tiene memorizzati tutti gli identificativi dei processi*/
+int i;
 
-unsigned long long int new_identity() /*crea una nuova identità (nuovo_id+1)*/
+int new_identity() /*crea una nuova identità (nuovo_id+1)*/
 {
   nuovo_id++;
   return nuovo_id;
 }
 
-void crea_primo_figlio(unsigned long long int fident)
+void crea_primo_figlio(int fident)
 {
+  pid_t pid_n;
+  char fid[MAX_BUFF_SIZE];
 
   pipe(pipeF[pipeatt]);
-  pid_t pid_n;
   pid_n=fork();
   if(pid_n==0)/*creazione processo figlio*/
   {
@@ -30,9 +31,8 @@ void crea_primo_figlio(unsigned long long int fident)
     dup2(pipeF[pipeatt][0], 0);  /*ora il figlio legge dalla pipe con scanf()*/
     close(pipeF[pipeatt][0]);    /*si chiude la lettura originale*/
     
-    char* fid;
-    sprintf(fid, "%lli", fident);
-    execlp(path_P, fid);
+    sprintf(fid, "%i", fident);
+    execlp(path_P, fid, NULL);
     exit(0);
   }else{
     close(pipeF[pipeatt][0]);    /*questo processo deve inviare sulla pipe*/
@@ -51,12 +51,12 @@ void invia_messaggio(char* mess)
   msgsnd(msgid_main, &message, sizeof(message), 1);
 }
 
-void inserisci_figlio(unsigned long long int nident) /*inserisce un figlio in fondo alla coda*/
+void inserisci_figlio(int nident) /*inserisce un figlio in fondo alla coda*/
 {
+  char nid[MAX_BUFF_SIZE]; 
   
-  printf("B");                          /*scrivo al figlio che voglio aggiungere un Processo*/
-  char* nid;                            
-  sprintf(nid, "%lli", nident); 
+  printf("B");                          /*scrivo al figlio che voglio aggiungere un Processo*/                           
+  sprintf(nid, "%i", nident); 
   printf("%s", nid);                    /*scrivo al figlio l'identità del nuovo processo*/
       
 }
@@ -64,13 +64,13 @@ void inserisci_figlio(unsigned long long int nident) /*inserisce un figlio in fo
 
 int main(int argc, char* argv[])
 {
-  pid_t pic;
+  key_t key_m, key;
   crea_primo_figlio(new_identity());
   
-  key_t	key_m = ftok("/tmp/ipc/mqueues", getppid());
+  key_m = ftok("/tmp/ipc/mqueues", getppid());
   msgid_main = msgget(key_m, 0666|IPC_CREAT); 		/*si apre la pipe con il main*/
 
-  key_t key = ftok("/tmp/ipc/mqueues", getpid());   /*si apre la pipe per la comunicazione con i comandi*/
+  key = ftok("/tmp/ipc/mqueues", getpid());   /*si apre la pipe per la comunicazione con i comandi*/
   msgid = msgget(key, 0666|IPC_CREAT);
 
 
@@ -86,8 +86,9 @@ int main(int argc, char* argv[])
           selezionato=0;
           if(size_Coda>1)
           {
+            pid_t pid_n;
             size_Coda--; 
-            for(int i=0; i<MAX_QUEUE; i++)  /*si aggiorna la coda eliminando il primo identificativo*/
+            for(i=0; i<MAX_QUEUE; i++)  /*si aggiorna la coda eliminando il primo identificativo*/
             {
               if(i>=size_Coda)
                 coda[i]=0;
@@ -98,10 +99,10 @@ int main(int argc, char* argv[])
             if(pipeatt==1)
               pipe(pipeF[0]);
             else pipe(pipeF[1]);
-            pid_t pid_n;
             pid_n=fork();
             if(pid_n==0)/*creazione processo figlio (ora in modo che non rimanga un P attivo)*/
             {
+              char fid[MAX_BUFF_SIZE];
               if(pipeatt==1)  /*si utilizza la pipe che non è in uso dal figlio in eliminazione*/
               {
                 close(pipeF[0][1]);
@@ -112,9 +113,8 @@ int main(int argc, char* argv[])
                 dup2(pipeF[1][0], 0);  /*ora il figlio legge dalla pipe con scanf()*/
                 close(pipeF[1][1]);
               }
-              char* fid;
-              sprintf(fid, "%lli", coda[0]);
-              execlp(path_P, fid);
+              sprintf(fid, "%i", coda[0]);
+              execlp(path_P, fid, NULL);
               exit(0);
             }
 
@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
               
             primo_pid = pid_n;
 
-            for(int i=0; i<size_Coda; i++)
+            for(i=0; i<size_Coda; i++)
             {
               inserisci_figlio(coda[i]);
             }
@@ -156,19 +156,19 @@ int main(int argc, char* argv[])
 
         case 'C':     /*selezionare un elemento e invia la lista*/
         {             /*con l'elemento selezionato */
+          char lung[MAX_BUFF_SIZE];  
           selezionato++;                 /*l'elemento selezionato aumenta di uno ciclicamente*/
           if(selezionato>=size_Coda)
             selezionato = 0;
-
-          char* lung;                             
-          sprintf(lung, "%lli", size_Coda);
+                           
+          sprintf(lung, "%i", size_Coda);
           invia_messaggio(lung);          /*invio la lunghezza della coda*/
-          for(int i=0; i<size_Coda; i++)
+          for(i=0; i<size_Coda; i++)
           {
-            char* mess;
+            char mess[MAX_BUFF_SIZE];
             if(i!=selezionato)
-              sprintf(mess, "%lli ", coda[i]);        
-            else sprintf(mess, "(%lli) ", coda[i]);
+              sprintf(mess, "%i ", coda[i]);        
+            else sprintf(mess, "(%i) ", coda[i]);
             invia_messaggio(mess);         /*invio gli elementi*/
           }
         }break;
@@ -177,27 +177,27 @@ int main(int argc, char* argv[])
         {
           if(size_Coda>1)
           {
-          char* sel;
-          sprintf(sel, "%lli", selezionato);
+          char sel[MAX_BUFF_SIZE];
+          sprintf(sel, "%i", selezionato);
           printf("%c", 'E');      /*comunico che dall'elemento selezionato in poi vanno eliminati tutti*/
           printf("%s", sel);
 
           size_Coda=selezionato;  
-          for(int i=selezionato; i<MAX_QUEUE; i++)  /*aggiorno la coda togliendo il */
+          for(i=selezionato; i<MAX_QUEUE; i++)  /*aggiorno la coda togliendo il */
           {
             if(i>=size_Coda)
               coda[i]=0;
             else coda[i]=coda[i+1];
           }
           size_Coda--;
-          for(int i=selezionato; i<MAX_QUEUE; i++)
+          for(i=selezionato; i<MAX_QUEUE; i++)
           {
             if(i<size_Coda)
               coda[i]=coda[i+1];
             else coda[i]=0;
           }
 
-          for(int i=selezionato; i<size_Coda; i++)
+          for(i=selezionato; i<size_Coda; i++)
             inserisci_figlio(coda[i]);
           selezionato=0;
 
