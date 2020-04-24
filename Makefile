@@ -1,7 +1,7 @@
 .PHONY: help targets build clean 
 
 CC = gcc
-CFLAGS = -std=gnu90 -g Wall -pedantic
+CFLAGS = -std=gnu90 -g -Wall -pedantic
 
 GREEN=\033[0;32m
 RED=\033[0;31m
@@ -12,8 +12,8 @@ default: help
 
 targets: bin/main
 
-bin/main: src/main.c bin/util.o bin/coda.o
-	$(CC) $(CFLAGS) -o bin/main src/main.c bin/util.o bin/coda.o
+bin/main: src/main.c bin/util.o 
+	$(CC) $(CFLAGS) -o bin/main src/main.c bin/util.o 
 		
 bin/button: src/button.c bin/util.o 
 	$(CC) $(CFLAGS) -o bin/button src/button.c bin/util.o 
@@ -30,8 +30,8 @@ bin/switc: src/switc.c bin/util.o
 bin/util.o: src/util.c
 	$(CC) $(CFLAGS) -c -o bin/util.o src/util.c
 
-bin/coda.o: src/coda.o
-	$(CC) $(CFLAGS) -c -o bin/coda.o src/coda.c
+bin/coda.o: src/coda.c
+	$(CC) $(CFLAGS) -c -o bin/coda src/coda.c bin/util.o
 
 help:
 	@echo "$(RED)INFORMAZIONI SUL PROGETTO$(STD)"
