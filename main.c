@@ -169,6 +169,10 @@ void core_buttons() {
 				kill(pid_SB, SIGTERM);
 				kill(pid_SC, SIGTERM);
 				kill(pid_SD, SIGTERM);
+				message.mesg_type=1;
+				message.mesg_text[0]='E';
+				msgsnd(msgid_Coda, &message, sizeof(message), 0);
+				wait(NULL);
 				break;
 			default:
 				printf("ERROR, invalid input!\n");
@@ -212,6 +216,10 @@ void core_switch() {
 				kill(pid_SB, SIGTERM);
 				kill(pid_SC, SIGTERM);
 				kill(pid_SD, SIGTERM);
+				message.mesg_type=1;
+				message.mesg_text[0]='E';
+				msgsnd(msgid_Coda, &message, sizeof(message), 0);
+				wait(NULL);
 				break;
 			default:
 				printf("ERROR, invalid input!\n");
