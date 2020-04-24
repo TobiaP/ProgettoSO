@@ -14,6 +14,9 @@ targets: bin/main bin/Coda bin/Button bin/Led bin/S bin/Switc
 
 bin/main: src/main.c bin/util.o 
 	$(CC) $(CFLAGS) -o bin/main src/main.c bin/util.o 
+	
+bin/coda: src/coda.c bin/util.o
+	$(CC) $(CFLAGS) -o bin/coda src/coda.c bin/util.o
 		
 bin/button: src/button.c bin/util.o 
 	$(CC) $(CFLAGS) -o bin/button src/button.c bin/util.o 
@@ -30,8 +33,8 @@ bin/switc: src/switc.c bin/util.o
 bin/util.o: src/util.c
 	$(CC) $(CFLAGS) -c -o bin/util.o src/util.c
 
-bin/coda.o: src/coda.c
-	$(CC) $(CFLAGS) -c -o bin/coda src/coda.c bin/util.o
+bin/coda: src/coda.c bin/util.o
+	$(CC) $(CFLAGS) -o bin/coda src/coda.c bin/util.o
 
 help:
 	@echo "$(RED)INFORMAZIONI SUL PROGETTO$(STD)"
