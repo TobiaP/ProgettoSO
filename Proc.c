@@ -1,24 +1,4 @@
-#include <assert.h>
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <float.h>
-#include <limits.h>
-#include <math.h>
-#include <pthread.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-#include <sys/shm.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <time.h>
-#include <unistd.h>
+#include "util.h"
 
 struct mesg_buffer { 
     long mesg_type; 
@@ -33,8 +13,6 @@ struct mesg_buffer {
 #define arg_0 "1"
 #define MAX_BUFF_SIZE 1024
 
-/*^^^^^^^^^^^^^^*/
-/*util.h*/
 
 pid_t pid, pid_figlio, pid_padre;
 int pipeF[2], pipeP[2], fig=0;/*pipe con il figlio, pipe con il padre, 1->c'è figlio / 0->non c'è*/
