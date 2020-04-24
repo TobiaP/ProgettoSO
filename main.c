@@ -53,18 +53,18 @@ int main() {
 /* inizializzazione processi*/
 void init() {
 	int i = 1;
-	
+	char* pid_C;
+	key_t key_Coda, key_SA, key_SB, key_SC, key_SD;
 	/* Inizializzazione coda*/
 	pid_Coda = fork();
 	if (pid_Coda == 0) {
 		mkfifo(path_pipe, 0666);
-		execlp(path_C, NULL);	
+		execlp(path_C,arg_0,  NULL);	
 		exit(0);
 	}
-	key_y key_Coda = ftok("/tmp/ipc/mqueues", pid_Coda);
+	key_Coda = ftok("/tmp/ipc/mqueues", pid_Coda);
 	msgid_Coda = msgget(key_Coda, 0666|IPC_CREAT);
 	
-	char* pid_C;
 	sprintf(pid_C, "%i", pid_Coda);
 	
 	/* scelta bottoni / interruttori*/
@@ -89,9 +89,9 @@ void init() {
 		} else {
 			execlp(path_S, "1", "A", pid_C, NULL);
 		}
-		exit(0)
+		exit(0);
 	}
-	key_t key_SA = ftok("/tmp/ipc/mqueues", pid_SA);	/*accedo alla pipe creata nel figlio*/
+	key_SA = ftok("/tmp/ipc/mqueues", pid_SA);	/*accedo alla pipe creata nel figlio*/
 	msgid_SA = msgget(key_SA, 0666|IPC_CREAT);
 	
 	/* B*/
@@ -103,9 +103,9 @@ void init() {
 		} else {
 			execlp(path_S, "1", "B", pid_C, NULL);
 		}
-		exit(0)
+		exit(0);
 	}
-	key_t key_SB = ftok("/tmp/ipc/mqueues", pid_SB);
+	key_SB = ftok("/tmp/ipc/mqueues", pid_SB);
 	msgid_SB = msgget(key_SB, 0666|IPC_CREAT);
 	
 	/* C*/
@@ -117,9 +117,9 @@ void init() {
 		} else {
 			execlp(path_S, "1", "C", pid_C, NULL);
 		}
-		exit(0)
+		exit(0);
 	}
-	key_t key_SC = ftok("/tmp/ipc/mqueues", pid_SC);
+	key_SC = ftok("/tmp/ipc/mqueues", pid_SC);
 	msgid_SC = msgget(key_SC, 0666|IPC_CREAT);
 	
 	/* D*/
@@ -131,9 +131,9 @@ void init() {
 		} else {
 			execlp(path_S, "1", "D", pid_C, NULL);
 		}
-		exit(0)
+		exit(0);
 	}
-	key_t key_SD = ftok("/tmp/ipc/mqueues", pid_SD);
+	key_SD = ftok("/tmp/ipc/mqueues", pid_SD);
 	msgid_SD = msgget(key_SD, 0666|IPC_CREAT);
 }
 
@@ -316,7 +316,7 @@ void pressione_T_SD(double tempo) {
 
 void print() {
 	printf("\n\n[A][B][C][D]\n");
-	printf("(%d",led_status[0],")(%d",led_status[1],")(%d",led_status[2],")(%d",led_status[3],")\n\n\n");
+	printf("(%d)(%d)(%d)(%d)\n\n\n",led_status[0],led_status[1],led_status[2],led_status[3]);
 	pint_needed = 0;
 }
 
