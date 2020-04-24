@@ -53,7 +53,7 @@ int main() {
 /* inizializzazione processi*/
 void init() {
 	int i = 1;
-	char* pid_C;
+	char pid_C[MAX_BUFF_SIZE];
 	key_t key_Coda, key_SA, key_SB, key_SC, key_SD;
 	/* Inizializzazione coda*/
 	pid_Coda = fork();
@@ -81,7 +81,7 @@ void init() {
 	/* inizializzazione bottoni / interruttori*/
 	
 	/* A*/
-	pid = fork();
+	pid_SA = fork();
 	if (pid == 0) {                    /*codice figlio*/
 		mkfifo(path_pipe, 0666);       /*creo una pipe con nome*/
 		if (type == 'b') {
@@ -95,7 +95,7 @@ void init() {
 	msgid_SA = msgget(key_SA, 0666|IPC_CREAT);
 	
 	/* B*/
-	pid = fork();
+	pid_SB = fork();
 	if (pid == 0) {
 		mkfifo(path_pipe, 0666);
 		if (type == 'b') {
@@ -109,7 +109,7 @@ void init() {
 	msgid_SB = msgget(key_SB, 0666|IPC_CREAT);
 	
 	/* C*/
-	pid = fork();
+	pid_SC = fork();
 	if (pid == 0) {
 		mkfifo(path_pipe, 0666);
 		if (type == 'b') {
@@ -123,7 +123,7 @@ void init() {
 	msgid_SC = msgget(key_SC, 0666|IPC_CREAT);
 	
 	/* D*/
-	pid = fork();
+	pid_SD = fork();
 	if (pid == 0) {
 		mkfifo(path_pipe, 0666);
 		if (type == 'b') {
