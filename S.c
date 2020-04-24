@@ -1,17 +1,5 @@
 #include "util.h"
 
-struct mesg_buffer { 
-    long mesg_type; 
-    char mesg_text[100]; 
-} message; 
-
-#define path_pipe "/tmp/ipc/"
-#define path_L "bin/Led.c"
-#define path_B "bin/Button.c"
-#define path_S "bin/Switc.c"
-#define arg_0 "1"
-#define MAX_BUFF_SIZE 1024
-
 volatile int flag_usr1 = 0;
 volatile int flag_usr2 = 0;
 volatile int flag_term = 0;
@@ -98,10 +86,10 @@ void premi_T(double tempo)
 int main(int argc, char* argv[])
 {
 
-  key_t key = ftok("/tmp/ipc/mqueues", getpid());   //si apre la pipe per la comunicazione con il main
+  key_t key = ftok("/tmp/ipc/mqueues", getpid());   /*si apre la pipe per la comunicazione con il main*/
   int msgid = msgget(key, 0666|IPC_CREAT);
     
-  key_t key_C = ftok("/tmp/ipc/mqueues", atoi(argv[2])); //si apre la pipe con la Coda
+  key_t key_C = ftok("/tmp/ipc/mqueues", atoi(argv[2])); /*si apre la pipe con la Coda*/
   msgid_C = msgget(key, 0666|IPC_CREAT);
 
   /*creo un led e ed una pipe che connetta S<->Led*/
