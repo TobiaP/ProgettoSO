@@ -48,9 +48,10 @@ int main(int argc, char* argv[]) {
     
     if(flag_usr2) /*ricevere stato ON/OFF*/
     {
+      int errlett;
       flag_usr2=0;
 
-      int errlett = msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
+      errlett = msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
       if(errlett==-1) printf("Messaggio non letto correttamente");
 
       stato=atoi(message.mesg_text);
