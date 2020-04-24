@@ -1,7 +1,6 @@
 #define _GNU_SOURCE
 
 #include "util.h"
-#include "s.h"
 
 char type;
 pid_t pid, pid_SA, pid_SB, pid_SC, pid_SD, pid_Coda;
@@ -290,28 +289,28 @@ void led_check() {
 void pressione_T_SA(double tempo) {                         /*se l'utente non inserisce il tempo deve essere tempo=0.5*/
 	message.mesg_type=1;                                    /*creo un messaggio da mandare a SA*/
 	sprintf(message.mesg_text, "%f", tempo);                /*in cui inserisco un tempo (nel caso dei bottoni sarà sempre 0.0)*/
-	msgsnd(msgid_SA, &message, sizeof(message, 0));          /*lo invio*/
+	msgsnd(msgid_SA, &message, sizeof(message), 0);          /*lo invio*/
 	kill(pid_SA, SIGUSR2);                                  /*comunico a SA che c'è un messaggio da leggere*/
 }
 
 void pressione_T_SB(double tempo) {
 	message.mesg_type=1;
 	sprintf(message.mesg_text, "%f", tempo);
-	msgsnd(msgid_SB, &message, sizeof(message, 0));
+	msgsnd(msgid_SB, &message, sizeof(message), 0);
 	kill(pid_SB, SIGUSR2);
 }
 
 void pressione_T_SC(double tempo) {
 	message.mesg_type=1;
 	sprintf(message.mesg_text, "%f", tempo);
-	msgsnd(msgid_SC, &message, sizeof(message, 0));
+	msgsnd(msgid_SC, &message, sizeof(message), 0);
 	kill(pid_SC, SIGUSR2);
 }
 
 void pressione_T_SD(double tempo) {
 	message.mesg_type=1;
 	sprintf(message.mesg_text, "%f", tempo);
-	msgsnd(msgid_SD, &message, sizeof(message, 0));
+	msgsnd(msgid_SD, &message, sizeof(message), 0);
 	kill(pid_SD, SIGUSR2);
 }
 
