@@ -17,10 +17,10 @@ void sighandler_int(int sig) {
     }
 }
 
-int pid_L, pid_T, pid, msgid_T, msgid_L, msgid_C;
+int pid_L, pid_T, pid, msgid_T, msgid_L, msgid_C, msgid;
 char pipe_L[MAX_BUFF_SIZE], pipe_T[MAX_BUFF_SIZE];
 
-void azione_T(char azione)
+void aziona_T(char azione)
 {
   switch(azione)
   {
@@ -85,12 +85,12 @@ void premi_T(double tempo)
 /*[0]=0/1->button/switch [1]="comando corrispondente (A, B, C, D) [2]=Pid_Coda*/
 int main(int argc, char* argv[])
 {
-
-  key_t key = ftok("/tmp/ipc/mqueues", getpid());   /*si apre la pipe per la comunicazione con il main*/
-  int msgid = msgget(key, 0666|IPC_CREAT);
+  key_t key, key_T, key_L, key_C;
+  key = ftok("/tmp/ipc/mqueues", getpid());   /*si apre la pipe per la comunicazione con il main*/
+  msgid = msgget(key, 0666|IPC_CREAT);
     
-  key_t key_C = ftok("/tmp/ipc/mqueues", atoi(argv[2])); /*si apre la pipe con la Coda*/
-  msgid_C = msgget(key, 0666|IPC_CREAT);
+  key_C = ftok("/tmp/ipc/mqueues", atoi(argv[2])); /*si apre la pipe con la Coda*/
+  msgid_C = msgget(key_C, 0666|IPC_CREAT);
 
   /*creo un led e ed una pipe che connetta S<->Led*/
   pid=fork();
@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
   }
   
   pid_L=pid;
-  key_t key_L = ftok("/tmp/ipc/mqueues", pid_L);
+  key_L = ftok("/tmp/ipc/mqueues", pid_L);
   msgid_L = msgget(key_L, 0666|IPC_CREAT);
   
   /*creo un T(button/switch) e ed una pipe che connetta S<->T*/
@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
   }
 
   pid_T=pid;
-  key_t key_T = ftok("/tmp/ipc/mqueues", pid_T);
+  key_T = ftok("/tmp/ipc/mqueues", pid_T);
   msgid_T = msgget(key_T, 0666|IPC_CREAT);
 
   signal(SIGTERM, sighandler_int);
