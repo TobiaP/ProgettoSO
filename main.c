@@ -25,8 +25,24 @@ void pressione_T_SC(double tempo);
 void pressione_T_SD(double tempo);
 void print();
 
+void sighandler_int(int sig) {
+    if (sig == SIGUSR1) {
+        flag_usr1 = 1;
+    }
+    if (sig == SIGUSR2) {
+        flag_usr2 = 1;
+    }
+    if (sig == SIGTERM) {
+        flag_term = 1;
+    }
+}
+
 /*-----------------------------------------------------------------------------------------------------------------------*/
 int main() {
+	
+  signal(SIGTERM, sighandler_int);
+  signal(SIGUSR1, sighandler_int);
+  signal(SIGUSR2, sighandler_int);
 	
 	init();
 	
