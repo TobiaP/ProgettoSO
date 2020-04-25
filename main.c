@@ -83,7 +83,7 @@ void init() {
 	
 	/* A*/
 	pid_SA = fork();
-	if (pid == 0) {                    /*codice figlio*/
+	if (pid_SA == 0) {                    /*codice figlio*/
 		nome_pipe(getpid(), pipes_path);
 		mkfifo(pipes_path, 0666);       /*creo una pipe con nome*/
 		if (type == 'b') {
@@ -98,7 +98,7 @@ void init() {
 	
 	/* B*/
 	pid_SB = fork();
-	if (pid == 0) {
+	if (pid_SB == 0) {
 		nome_pipe(getpid(), pipes_path);
 		mkfifo(pipes_path, 0666);       /*creo una pipe con nome*/
 		if (type == 'b') {
@@ -113,7 +113,7 @@ void init() {
 	
 	/* C*/
 	pid_SC = fork();
-	if (pid == 0) {
+	if (pid_SC == 0) {
 		nome_pipe(getpid(), pipes_path);
 		mkfifo(pipes_path, 0666);       /*creo una pipe con nome*/
 		if (type == 'b') {
@@ -128,7 +128,7 @@ void init() {
 	
 	/* D*/
 	pid_SD = fork();
-	if (pid == 0) {
+	if (pid_SD == 0) {
 		nome_pipe(getpid(), pipes_path);
 		mkfifo(pipes_path, 0666);       /*creo una pipe con nome*/
 		if (type == 'b') {
@@ -154,18 +154,27 @@ void core_buttons() {
 		
 		switch (input) {
 			case 'a':
+				{
 				pressione_T_SA(tempo); /* call(S1);*/
+				}
 				break;
 			case 'b':
+				{
 				pressione_T_SB(tempo); /* call(S2);*/
+				}
 				break;
 			case 'c':
+				{
 				pressione_T_SC(tempo); /* call(S3);*/
+				}
 				break;
 			case 'd':
+				{
 				pressione_T_SD(tempo); /* call(S4);*/
+				}
 				break;
 			case 'E':
+				{
 				kill(pid_SA, SIGTERM);
 				kill(pid_SB, SIGTERM);
 				kill(pid_SC, SIGTERM);
@@ -174,9 +183,12 @@ void core_buttons() {
 				message.mesg_text[0]='E';
 				msgsnd(msgid_Coda, &message, sizeof(message), 0);
 				wait(NULL);
+				}
 				break;
 			default:
+				{
 				printf("ERROR, invalid input!\n");
+				}
 				break;
 		};
 		
@@ -201,18 +213,27 @@ void core_switch() {
 		
 		switch (input) {
 			case 'a':
+				{
 				pressione_T_SA(tempo); /* call(S1);*/
+				}
 				break;
 			case 'b':
+				{
 				pressione_T_SB(tempo); /* call(S2);*/
+				}
 				break;
 			case 'c':
+				{
 				pressione_T_SC(tempo); /* call(S3);*/
+				}
 				break;
 			case 'd':
+				{
 				pressione_T_SD(tempo); /* call(S4)*/
+				}
 				break;
 			case 'E':
+				{
 				kill(pid_SA, SIGTERM);
 				kill(pid_SB, SIGTERM);
 				kill(pid_SC, SIGTERM);
@@ -221,9 +242,12 @@ void core_switch() {
 				message.mesg_text[0]='E';
 				msgsnd(msgid_Coda, &message, sizeof(message), 0);
 				wait(NULL);
+				}
 				break;
 			default:
+				{
 				printf("ERROR, invalid input!\n");
+				}
 				break;
 		};
 		
