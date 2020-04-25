@@ -53,12 +53,13 @@ int main() {
 /* inizializzazione processi*/
 void init() {
 	int i = 1;
-	char pid_C[MAX_BUFF_SIZE];
+	char pid_C[MAX_BUFF_SIZE], pipes_path[MAX_BUFF_SIZE]; /*pid_C verrà passato ai comandi e la path sarà usata per
 	key_t key_Coda, key_SA, key_SB, key_SC, key_SD;
 	/* Inizializzazione coda*/
 	pid_Coda = fork();
 	if (pid_Coda == 0) {
-		mkfifo(path_pipe, 0666);
+		get_pipe_name(getpid(), pipes_path);
+		mkfifo(pipes_path, 0666);
 		execlp(path_C,arg_0,  NULL);	
 		exit(0);
 	}
@@ -83,7 +84,8 @@ void init() {
 	/* A*/
 	pid_SA = fork();
 	if (pid == 0) {                    /*codice figlio*/
-		mkfifo(path_pipe, 0666);       /*creo una pipe con nome*/
+		get_pipe_name(getpid(), pipes_path);
+		mkfifo(pipes_path, 0666);       /*creo una pipe con nome*/
 		if (type == 'b') {
 			execlp(path_S, "0", "A", pid_C, NULL);
 		} else {
@@ -97,6 +99,7 @@ void init() {
 	/* B*/
 	pid_SB = fork();
 	if (pid == 0) {
+		get_pipe_
 		mkfifo(path_pipe, 0666);
 		if (type == 'b') {
 			execlp(path_S, "0", "B", pid_C, NULL);
