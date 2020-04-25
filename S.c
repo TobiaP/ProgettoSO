@@ -96,8 +96,8 @@ int main(int argc, char* argv[])
   pid=fork();
   if(pid==0)
   {
-    sprintf(pipe_L, "%s%d", path_pipe, getpid());
-    mkfifo(path_pipe, 0666);
+    nome_pipe(getpid(), pipes_path);
+	mkfifo(pipes_path, 0666);       /*creo una pipe con nome*/
     execlp(path_L, arg_0, NULL);
     exit(0);
   }
@@ -110,8 +110,8 @@ int main(int argc, char* argv[])
   pid=fork();
   if(pid==0)
   {
-    sprintf(pipe_T, "%s%d", path_pipe, getpid());
-    mkfifo(path_pipe, 0666);
+    nome_pipe(getpid(), pipes_path);
+	mkfifo(pipes_path, 0666);       /*creo una pipe con nome*/
 
     if(argv[0][0]=='0') /*0->button, 1->switch*/
       execlp(path_B, arg_0, NULL);
