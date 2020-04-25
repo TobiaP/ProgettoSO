@@ -38,4 +38,6 @@ struct mesg_buffer {
 #define arg_0 "1"
 #define MAX_BUFF_SIZE 1024
 
+void nome_pipe(int pid, char* path_str);
+
 #endif
