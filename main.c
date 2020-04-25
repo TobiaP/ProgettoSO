@@ -222,6 +222,7 @@ void core_switch() {
 			case 'a':
 				{
 				pressione_T_SA(tempo); /* call(S1);*/
+				
 				}
 				break;
 			case 'b':
@@ -258,11 +259,7 @@ void core_switch() {
 				break;
 		};
 		
-		/* stampa*/
-		led_check();
-		if (pint_needed != 0) {
-			print();
-		}
+		print();
 		
 	} while (input != 'E');
 }
@@ -290,35 +287,6 @@ int richiesta_stato_led_SD() {
 	kill(pid_SD, SIGUSR1);
 	msgrcv(msgid_SD, &message, sizeof(message), 1, 0);
 	return atoi(message.mesg_text);
-}
-
-void led_check() {
-	/* controllo lo stato attuale dei 4 led*/
-	int L1 = richiesta_stato_led_SA();
-	int L2 = richiesta_stato_led_SB();
-	int L3 = richiesta_stato_led_SC();
-	int L4 = richiesta_stato_led_SD();
-	
-	/* li confronto con gli ultimi stampati*/
-	if (L1 != led_status[0]) {
-		led_status[0] = L1;
-		pint_needed = 1;
-	}
-	
-	if (L2 != led_status[1]) {
-		led_status[1] = L2;
-		pint_needed = 1;
-	}
-	
-	if (L3 != led_status[2]) {
-		led_status[2] = L3;
-		pint_needed = 1;
-	}
-	
-	if (L4 != led_status[3]) {
-		led_status[3] = L4;
-		pint_needed = 1;
-	}
 }
 
 /* Pressione Tasto*/
@@ -352,7 +320,6 @@ void pressione_T_SD(double tempo) {
 
 void print() {
 	printf("\n\n[A][B][C][D]\n");
-	printf("(%d)(%d)(%d)(%d)\n\n\n",led_status[0],led_status[1],led_status[2],led_status[3]);
-	pint_needed = 0;
+	printf("(%i)(%i)(%i)(%i)\n\n\n",richiesta_stato_Led_SA(),richiesta_stato_Led_SB(),richiesta_stato_Led_SC(),richiesta_stato_Led_SD());
 }
 
