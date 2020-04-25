@@ -26,15 +26,6 @@ void pressione_T_SD(double tempo);
 void print();
 
 void sighandler_int(int sig) {
-    if (sig == SIGUSR1) {
-        flag_usr1 = 1;
-    }
-    if (sig == SIGUSR2) {
-        flag_usr2 = 1;
-    }
-    if (sig == SIGTERM) {
-        flag_term = 1;
-    }
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
