@@ -37,6 +37,7 @@ struct mesg_buffer {
 #define path_P "bin/Proc"
 #define arg_0 "1"
 #define MAX_BUFF_SIZE 1024
+#define MAX_QUEUE 100
 
 void nome_pipe(int pid, char* path_str);
 
