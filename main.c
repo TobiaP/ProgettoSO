@@ -58,7 +58,7 @@ void init() {
 	/* Inizializzazione coda*/
 	pid_Coda = fork();
 	if (pid_Coda == 0) {
-		get_pipe_name(getpid(), pipes_path);
+		nome_pipe(getpid(), pipes_path);
 		mkfifo(pipes_path, 0666);
 		execlp(path_C,arg_0,  NULL);	
 		exit(0);
@@ -84,7 +84,7 @@ void init() {
 	/* A*/
 	pid_SA = fork();
 	if (pid == 0) {                    /*codice figlio*/
-		get_pipe_name(getpid(), pipes_path);
+		nome_pipe(getpid(), pipes_path);
 		mkfifo(pipes_path, 0666);       /*creo una pipe con nome*/
 		if (type == 'b') {
 			execlp(path_S, "0", "A", pid_C, NULL);
@@ -99,8 +99,8 @@ void init() {
 	/* B*/
 	pid_SB = fork();
 	if (pid == 0) {
-		get_pipe_
-		mkfifo(path_pipe, 0666);
+		nome_pipe(getpid(), pipes_path);
+		mkfifo(pipes_path, 0666);       /*creo una pipe con nome*/
 		if (type == 'b') {
 			execlp(path_S, "0", "B", pid_C, NULL);
 		} else {
@@ -114,7 +114,8 @@ void init() {
 	/* C*/
 	pid_SC = fork();
 	if (pid == 0) {
-		mkfifo(path_pipe, 0666);
+		nome_pipe(getpid(), pipes_path);
+		mkfifo(pipes_path, 0666);       /*creo una pipe con nome*/
 		if (type == 'b') {
 			execlp(path_S, "0", "C", pid_C, NULL);
 		} else {
@@ -128,7 +129,8 @@ void init() {
 	/* D*/
 	pid_SD = fork();
 	if (pid == 0) {
-		mkfifo(path_pipe, 0666);
+		nome_pipe(getpid(), pipes_path);
+		mkfifo(pipes_path, 0666);       /*creo una pipe con nome*/
 		if (type == 'b') {
 			execlp(path_S, "0", "D", pid_C, NULL);
 		} else {
