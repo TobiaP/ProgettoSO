@@ -53,7 +53,7 @@ int main() {
 /* inizializzazione processi*/
 void init() {
 	int i = 1;
-	char pid_C[MAX_BUFF_SIZE], pipes_path[MAX_BUFF_SIZE]; /*pid_C verrà passato ai comandi e la path sarà usata per
+	char pid_C[MAX_BUFF_SIZE], pipes_path[MAX_BUFF_SIZE]; /*pid_C verrà passato ai comandi e la path sarà usata per i nomi delle pipe*/
 	key_t key_Coda, key_SA, key_SB, key_SC, key_SD;
 	/* Inizializzazione coda*/
 	pid_Coda = fork();
