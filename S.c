@@ -85,6 +85,7 @@ void premi_T(double tempo)
 /*[0]=0/1->button/switch [1]="comando corrispondente (A, B, C, D) [2]=Pid_Coda*/
 int main(int argc, char* argv[])
 {
+  char pipes_path[MAX_BUFF_SIZE];
   key_t key, key_T, key_L, key_C;
   key = ftok("/tmp/ipc/mqueues", getpid());   /*si apre la pipe per la comunicazione con il main*/
   msgid = msgget(key, 0666|IPC_CREAT);
