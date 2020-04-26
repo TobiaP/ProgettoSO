@@ -60,7 +60,7 @@ void init() {
 	nome_pipe(getpid(), pipes_path);
 	mkfifo(pipes_path, 0666);
 	key = ftok("/tmp/ipc/mqueues", getpid());
-	msgid = mssget(key, 0666|IPC_CREAT);
+	msgid = msgget(key, 0666|IPC_CREAT);
 	
 	/* Inizializzazione coda*/
 	pid_Coda = fork();
