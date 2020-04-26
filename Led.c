@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     
     if(primo=='B') /*ricevere stato ON/OFF*/
     {
-      msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
+      msgrcv(msgid, &message, sizeof(message), 1, 0);
       stato=atoi(message.mesg_text);
     }
 
