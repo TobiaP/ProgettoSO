@@ -1,22 +1,5 @@
 #include "util.h"
 
-volatile int flag_usr1 = 0;
-volatile int flag_usr2 = 0;
-volatile int flag_term = 0;
-
-/* handler dei segnali */
-void sighandler_int(int sig) {
-    if (sig == SIGUSR1) {
-        flag_usr1 = 1;
-    }
-    if (sig == SIGUSR2) {
-        flag_usr2 = 1;
-    }
-    if (sig == SIGTERM) {
-        flag_term = 1;
-    }
-}
-
 int pid_L, pid_T, pid, msgid_T, msgid_L, msgid_C, msgid;
 char pipe_L[MAX_BUFF_SIZE], pipe_T[MAX_BUFF_SIZE];
 
@@ -57,38 +40,47 @@ void aziona_T(char azione)
 
 int chiedi_stato_L()
 {
-  kill(pid_L, SIGUSR1);
-  msgrcv(msgid_L, &message, sizeof(message), 1, 0);
+  message.mesg_type=1;
+  message.mesg_text[0]='A';
+  msgsnd(msgid_L, &message, sizeof(message), 0);
+  msgrcv(msgid, &message, sizeof(message), 1, 0);
   return atoi(message.mesg_text);
 }
 int chiedi_stato_T()
 {
-  kill(pid_T, SIGUSR1);
-  msgrcv(msgid_T, &message, sizeof(message), 1, 0);
+  message.mesg_type=1;
+  message.mesg_text[0]='A';
+  msgsnd(msgid_T, &message, sizeof(message), 0);
+  msgrcv(msgid, &message, sizeof(message), 1, 0);
   return atoi(message.mesg_text);
 }
 void set_L(int stato)
 {
   message.mesg_type=1;
+  message.mesg_text[0]='B';
+  msgsnd(msgid_L, &message, sizeof(message), 0);
   message.mesg_text[0]='0'+stato;
   msgsnd(msgid_L, &message, sizeof(message), 0);
-  kill(pid_L, SIGUSR2);
 }
 void premi_T(double tempo) 
 {
   message.mesg_type=1;
+  message.mesg_text[0]='B';
+  msgsnd(msgid_T, &message, sizeof(message), 0);
   sprintf(message.mesg_text, "%f", tempo);
   msgsnd(msgid_T, &message, sizeof(message), 0);
-  kill(pid_T, SIGUSR2);
 }
 
 /*[0]=0/1->button/switch [1]="comando corrispondente (A, B, C, D) [2]=Pid_Coda*/
 int main(int argc, char* argv[])
 {
   char pipes_path[MAX_BUFF_SIZE];
-  key_t key, key_T, key_L, key_C;
+  key_t key, key_T, key_L, key_C, key_P;
   key = ftok("/tmp/ipc/mqueues", getpid());   /*si apre la pipe per la comunicazione con il main*/
   msgid = msgget(key, 0666|IPC_CREAT);
+ 
+  key_P = ftok("/tmp/ipc/mqueues", getppid());
+  msgid_P = msgget(key_P, 0666|IPC_CREAT);
     
   key_C = ftok("/tmp/ipc/mqueues", atoi(argv[2])); /*si apre la pipe con la Coda*/
   msgid_C = msgget(key_C, 0666|IPC_CREAT);
@@ -125,29 +117,24 @@ int main(int argc, char* argv[])
   key_T = ftok("/tmp/ipc/mqueues", pid_T);
   msgid_T = msgget(key_T, 0666|IPC_CREAT);
 
-  signal(SIGTERM, sighandler_int);
-  signal(SIGUSR1, sighandler_int);
-  signal(SIGUSR2, sighandler_int);
-
   while(1)
   {
-    /*SIGUSR1->inviare stato Led*/
-    if(flag_usr1)
+    char primo;
+    msgrcv(msgid, $message, sizeof(message), 1, 0);
+    primo=message.mesg_text[0];
+    if(primo=='A')
     {
-      flag_usr1=0;
 
       /*resetta lo stato del led in modo che sia concorde a T*/
       set_L(chiedi_stato_T());
       
       message.mesg_type=1;
       sprintf(message.mesg_text, "%i", chiedi_stato_L());
-      msgsnd(msgid, &message, sizeof(message), 0);
+      msgsnd(msgid_P, &message, sizeof(message), 0);
     }
     
-    /*SIGUSR2->premere T*/
-    if(flag_usr2)
+    if(primo=='B')
     {
-      flag_usr2=0;
       /*riceve il tempo di spegnimento (per gli switch è indifferente)*/
       msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
       if(!chiedi_stato_T())
@@ -157,15 +144,14 @@ int main(int argc, char* argv[])
     }
 
     /*SIGTERM->terminare il processo, comunicare al led, a T e a Coda di terminare*/
-    if(flag_term)
+    if(primo=='E')
     {
-      flag_term=0;
       message.mesg_type=1;
       message.mesg_text[0]='E';
       msgsnd(msgid_C, &message, sizeof(message), 0);
-          
-      kill(pid_L, SIGTERM);
-      kill(pid_T, SIGTERM);
+      msgsnd(msgid_L, &message, sizeof(message), 0);
+      msgsnd(msgid_T, &message, sizeof(message), 0);
+	    
       wait(NULL);
       msgctl(msgid, IPC_RMID, NULL);
       exit(0);
