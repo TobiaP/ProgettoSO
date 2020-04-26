@@ -3,8 +3,8 @@
 
 int pid;
 
-key_t key;
-int msgid;
+key_t key, key_P;
+int msgid, msgid_P;
 
 int stato;
 
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
             
         message.mesg_type = 1;
         message.mesg_text[0] = '0'+stato;
-        msgsnd(msgid, &message, sizeof(message), 0);
+        msgsnd(msgid_P, &message, sizeof(message), 0);
       }
 
       if(primo=='B') /*ricevere stato ON/OFF*/
@@ -57,10 +57,8 @@ int main(int argc, char* argv[])
 	key_t key_ppid;
 
         ppid =(int) getppid();
-        key_ppid = ftok("/tmp/ipc/mqueues", ppid);
-        msgid_ppid = msgget(key_ppid, 0666 | IPC_CREAT);
         message.mesg_type = 1;
-        msgsnd(msgid_ppid, &message, sizeof(message), 0);
+        msgsnd(msgid_P, &message, sizeof(message), 0);
       
         msgctl(msgid, IPC_RMID, NULL);
         exit(0);
