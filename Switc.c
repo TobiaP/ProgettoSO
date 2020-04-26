@@ -10,7 +10,7 @@ int stato;
 int main(int argc, char* argv[])
 {
   	pid = getpid();
-
+	stato=0;
   	key = ftok("/tmp/ipc/mqueues", pid);
   	msgid = msgget(key, 0666 | IPC_CREAT);
 	
