@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
     if(primo=='B')
     {
       /*riceve il tempo di spegnimento (per gli switch è indifferente)*/
-      msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
+      msgrcv(msgid, &message, sizeof(message), 1, 0);
       if(!chiedi_stato_T())
         aziona_T(argv[1][0]);  /*se T non è in pressione l'azione del comando viene eseguita*/
       
