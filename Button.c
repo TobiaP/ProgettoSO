@@ -14,6 +14,9 @@ int main(int argc, char* argv[])
 	clock_t inizio;
 	
   	pid = getpid(); 
+	
+	key_P = ftok("/tmp/ipc/mqueues", getppid());
+  	msgid_P = msgget(key_P, 0666 | IPC_CREAT);
 
 	key = ftok("/tmp/ipc/mqueues", pid);
   	msgid = msgget(key, 0666 | IPC_CREAT);
