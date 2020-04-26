@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
   msgid = msgget(key, 0666 | IPC_CREAT);
 
   key_P = ftok("/tmp/ipc/mqueues", getppid());
-  msgid_P = msgget(key, 0666 | IPC_CREAT);
+  msgid_P = msgget(key_P, 0666 | IPC_CREAT);
   
   while(1)
   {
