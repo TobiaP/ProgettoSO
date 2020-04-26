@@ -3,22 +3,6 @@
 
 int pid;
 
-volatile int flag_usr1 = 0;
-volatile int flag_usr2 = 0;
-volatile int flag_term = 0;
-
-void sighandler_int(int sig) {
-    if (sig == SIGUSR1) {
-        flag_usr1 = 1;
-    }
-    if (sig == SIGUSR2) {
-        flag_usr2 = 1;
-    }
-    if (sig == SIGTERM) {
-        flag_term = 1;
-    }
-}
-
 key_t key;
 int msgid;
 
@@ -30,10 +14,6 @@ int main(int argc, char* argv[])
 	clock_t inizio;
 	
   	pid = getpid(); 
-  
-  	signal(SIGTERM, sighandler_int);
-  	signal(SIGUSR1, sighandler_int);
-  	signal(SIGUSR2, sighandler_int);
 
 	key = ftok("/tmp/ipc/mqueues", pid);
   	msgid = msgget(key, 0666 | IPC_CREAT);
@@ -44,10 +24,11 @@ int main(int argc, char* argv[])
 
     while(1)
     {
-      
-      if(flag_usr1) /*inviare stato ON/OFF*/
+      char primo;
+      msgrcv(msgid, &message, sizeof(message),1, 0);
+      primo=message.mesg_text[0];
+      if(primo=='A') /*inviare stato ON/OFF*/
       {
-        flag_usr1=0;
         if(stato)
         {
           if(tempoatt<(clock()-inizio))
@@ -59,13 +40,9 @@ int main(int argc, char* argv[])
         msgsnd(msgid, &message, sizeof(message), 0);
       }
 
-      if(flag_usr2) /*ricevere stato ON/OFF*/
+      if(primo=='B') /*ricevere stato ON/OFF*/
       {
-	int errlett;
-        flag_usr2=0;
-
-        errlett = msgrcv(msgid, &message, sizeof(message), 1, IPC_NOWAIT);
-        if(errlett==-1) printf("Messaggio non letto correttamente");
+	msgrcv(msgid, &message, sizeof(message), 1, 0);
 
         inizio=clock();
         tempoatt=tempostd; /*tempoatt è sempre >= tempostd*/
@@ -74,11 +51,10 @@ int main(int argc, char* argv[])
 
       }
 
-      if(flag_term)
+      if(primo=='E')
       {
 	int ppid, msgid_ppid;
 	key_t key_ppid;
-        flag_term = 0;
 
         ppid =(int) getppid();
         key_ppid = ftok("/tmp/ipc/mqueues", ppid);
