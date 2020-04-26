@@ -1,6 +1,6 @@
 #include "util.h"
 
-int pid_L, pid_T, pid, msgid_T, msgid_L, msgid_C, msgid;
+int pid_L, pid_T, pid, msgid_T, msgid_L, msgid_C, msgid, msgid_P;
 char pipe_L[MAX_BUFF_SIZE], pipe_T[MAX_BUFF_SIZE];
 
 void aziona_T(char azione)
@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
   while(1)
   {
     char primo;
-    msgrcv(msgid, $message, sizeof(message), 1, 0);
+    msgrcv(msgid, &message, sizeof(message), 1, 0);
     primo=message.mesg_text[0];
     if(primo=='A')
     {
