@@ -25,15 +25,9 @@ void pressione_T_SC(double tempo);
 void pressione_T_SD(double tempo);
 void print();
 
-void sighandler_int(int sig) {
-}
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
 int main() {
-	
-  signal(SIGTERM, sighandler_int);
-  signal(SIGUSR1, sighandler_int);
-  signal(SIGUSR2, sighandler_int);
 	
 	init();
 	
@@ -61,7 +55,13 @@ int main() {
 void init() {
 	int i = 1;
 	char pid_C[MAX_BUFF_SIZE], pipes_path[MAX_BUFF_SIZE]; /*pid_C verrà passato ai comandi e la path sarà usata per i nomi delle pipe*/
-	key_t key_Coda, key_SA, key_SB, key_SC, key_SD;
+	key_t key_Coda, key_SA, key_SB, key_SC, key_SD, key;
+	
+	nome_pipe(getpid(), pipes_path);
+	mkfifo(pipes_path, 0666);
+	key = ftok("/tmp/ipc/mqueues", getpid());
+	msgid = mssget(key, 0666|IPC_CREAT);
+	
 	/* Inizializzazione coda*/
 	pid_Coda = fork();
 	if (pid_Coda == 0) {
@@ -182,12 +182,12 @@ void core_buttons() {
 				break;
 			case 'E':
 				{
-				kill(pid_SA, SIGTERM);
-				kill(pid_SB, SIGTERM);
-				kill(pid_SC, SIGTERM);
-				kill(pid_SD, SIGTERM);
 				message.mesg_type=1;
 				message.mesg_text[0]='E';
+				msgsnd(msgid_SA, &message, sizeof(message), 0);
+				msgsnd(msgid_SB, &message, sizeof(message), 0);
+				msgsnd(msgid_SC, &message, sizeof(message), 0);
+				msgsnd(msgid_SD, &message, sizeof(message), 0);
 				msgsnd(msgid_Coda, &message, sizeof(message), 0);
 				wait(NULL);
 				}
@@ -199,11 +199,7 @@ void core_buttons() {
 				break;
 		};
 		
-		/* stampa*/
-		led_check();
-		if (pint_needed != 0) {
-			print();
-		}
+		print();
 		
 	} while (input != 'E');
 }
@@ -242,12 +238,12 @@ void core_switch() {
 				break;
 			case 'E':
 				{
-				kill(pid_SA, SIGTERM);
-				kill(pid_SB, SIGTERM);
-				kill(pid_SC, SIGTERM);
-				kill(pid_SD, SIGTERM);
 				message.mesg_type=1;
 				message.mesg_text[0]='E';
+				msgsnd(msgid_SA, &message, sizeof(message), 0);
+				msgsnd(msgid_SB, &message, sizeof(message), 0);
+				msgsnd(msgid_SC, &message, sizeof(message), 0);
+				msgsnd(msgid_SD, &message, sizeof(message), 0);
 				msgsnd(msgid_Coda, &message, sizeof(message), 0);
 				wait(NULL);
 				}
@@ -266,56 +262,69 @@ void core_switch() {
 
 /* Verifica Led*/
 int richiesta_stato_led_SA() {
-	kill(pid_SA, SIGUSR1);                                  /*comunico ad SA la necessità di conoscere lo stato del led*/
-	msgrcv(msgid_SA, &message, sizeof(message), 1, 0);      /*leggo lo stato del led*/
+	message.mesg_type=1;
+	message.mesg_text[0]='A';
+	msgsnd(msgid_SA, &message, sizeof(message), 0);         /*comunico ad SA la necessità di conoscere lo stato del led*/
+	msgrcv(msgid, &message, sizeof(message), 1, 0);      /*leggo lo stato del led*/
 	return atoi(message.mesg_text);                         /*converto lo stato del led in int (0, 1)*/
 }
 
 int richiesta_stato_led_SB() {
-	kill(pid_SB, SIGUSR1);
-	msgrcv(msgid_SB, &message, sizeof(message), 1, 0);
+	message.mesg_type=1;
+	message.mesg_text[0]='A';
+	msgsnd(msgid_SB, &message, sizeof(message), 0);
+	msgrcv(msgid, &message, sizeof(message), 1, 0);
 	return atoi(message.mesg_text);
 }
 
 int richiesta_stato_led_SC() {
-	kill(pid_SC, SIGUSR1);
-	msgrcv(msgid_SC, &message, sizeof(message), 1, 0);
+	message.mesg_type=1;
+	message.mesg_text[0]='A';
+	msgsnd(msgid_SC, &message, sizeof(message), 0);
+	msgrcv(msgid, &message, sizeof(message), 1, 0);
 	return atoi(message.mesg_text);
 }
 
 int richiesta_stato_led_SD() {
-	kill(pid_SD, SIGUSR1);
-	msgrcv(msgid_SD, &message, sizeof(message), 1, 0);
+	message.mesg_type=1;
+	message.mesg_text[0]='A';
+	msgsnd(msgid_SD, &message, sizeof(message), 0);
+	msgrcv(msgid, &message, sizeof(message), 1, 0);
 	return atoi(message.mesg_text);
 }
 
 /* Pressione Tasto*/
 void pressione_T_SA(double tempo) {                         /*se l'utente non inserisce il tempo deve essere tempo=0.5*/
 	message.mesg_type=1;                                    /*creo un messaggio da mandare a SA*/
+	message.mesg_text[0]='B';
+	msgsnd(msgid_SA, &message, sizeof(message), 0);
 	sprintf(message.mesg_text, "%f", tempo);                /*in cui inserisco un tempo (nel caso dei bottoni sarà sempre 0.0)*/
 	msgsnd(msgid_SA, &message, sizeof(message), 0);          /*lo invio*/
-	kill(pid_SA, SIGUSR2);                                  /*comunico a SA che c'è un messaggio da leggere*/
+	                                  /*comunico a SA che c'è un messaggio da leggere*/
 }
 
 void pressione_T_SB(double tempo) {
 	message.mesg_type=1;
+	message.mesg_text[0]='B';
+	msgsnd(msgid_SA, &message, sizeof(message), 0);
 	sprintf(message.mesg_text, "%f", tempo);
 	msgsnd(msgid_SB, &message, sizeof(message), 0);
-	kill(pid_SB, SIGUSR2);
 }
 
 void pressione_T_SC(double tempo) {
 	message.mesg_type=1;
+	message.mesg_text[0]='B';
+	msgsnd(msgid_SA, &message, sizeof(message), 0);
 	sprintf(message.mesg_text, "%f", tempo);
 	msgsnd(msgid_SC, &message, sizeof(message), 0);
-	kill(pid_SC, SIGUSR2);
 }
 
 void pressione_T_SD(double tempo) {
 	message.mesg_type=1;
+	message.mesg_text[0]='B';
+	msgsnd(msgid_SA, &message, sizeof(message), 0);
 	sprintf(message.mesg_text, "%f", tempo);
 	msgsnd(msgid_SD, &message, sizeof(message), 0);
-	kill(pid_SD, SIGUSR2);
 }
 
 void print() {
