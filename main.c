@@ -329,6 +329,6 @@ void pressione_T_SD(double tempo) {
 
 void print() {
 	printf("\n\n[A][B][C][D]\n");
-	printf("(%i)(%i)(%i)(%i)\n\n\n",richiesta_stato_Led_SA(),richiesta_stato_Led_SB(),richiesta_stato_Led_SC(),richiesta_stato_Led_SD());
+	printf("(%i)(%i)(%i)(%i)\n\n\n",richiesta_stato_led_SA(),richiesta_stato_led_SB(),richiesta_stato_led_SC(),richiesta_stato_led_SD());
 }
 
