@@ -40,8 +40,8 @@ help:
 	@echo "$(RED)INFORMAZIONI SUL PROGETTO$(STD)"
 	@echo "Gaia Faggin"
 	@echo "Tobia Pavona"
-    	@echo "Thomas Herbert"
-    	@echo "Francesco Giacomazzi"
+	@echo "Thomas Herbert"
+	@echo "Francesco Giacomazzi"
 	@echo "\n Per iniziare: digita $(RED) make build$(STD), poi $(RED)./run$(STD), oppure $(RED) make clean$(STD) per rimuovere i file temporanei."
 
 build:
