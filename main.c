@@ -306,7 +306,7 @@ void pressione_T_SA(double tempo) {                         /*se l'utente non in
 void pressione_T_SB(double tempo) {
 	message.mesg_type=1;
 	message.mesg_text[0]='B';
-	msgsnd(msgid_SA, &message, sizeof(message), 0);
+	msgsnd(msgid_SB, &message, sizeof(message), 0);
 	sprintf(message.mesg_text, "%f", tempo);
 	msgsnd(msgid_SB, &message, sizeof(message), 0);
 }
@@ -314,7 +314,7 @@ void pressione_T_SB(double tempo) {
 void pressione_T_SC(double tempo) {
 	message.mesg_type=1;
 	message.mesg_text[0]='B';
-	msgsnd(msgid_SA, &message, sizeof(message), 0);
+	msgsnd(msgid_SC, &message, sizeof(message), 0);
 	sprintf(message.mesg_text, "%f", tempo);
 	msgsnd(msgid_SC, &message, sizeof(message), 0);
 }
@@ -322,7 +322,7 @@ void pressione_T_SC(double tempo) {
 void pressione_T_SD(double tempo) {
 	message.mesg_type=1;
 	message.mesg_text[0]='B';
-	msgsnd(msgid_SA, &message, sizeof(message), 0);
+	msgsnd(msgid_SD, &message, sizeof(message), 0);
 	sprintf(message.mesg_text, "%f", tempo);
 	msgsnd(msgid_SD, &message, sizeof(message), 0);
 }
