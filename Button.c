@@ -56,10 +56,6 @@ int main(int argc, char* argv[])
 
       if(primo=='E')
       {
-	int ppid, msgid_ppid;
-	key_t key_ppid;
-
-        ppid =(int) getppid();
         message.mesg_type = 1;
         msgsnd(msgid_P, &message, sizeof(message), 0);
       
